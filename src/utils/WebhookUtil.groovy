@@ -16,12 +16,16 @@ class WebhookUtil implements Serializable {
         this.ctx = ctx
     }
 
-    private post(url, Map body) {      
+    private post(url, Map body) {
+        def payload = JsonOutput.toJson(body)
+
+        println "Sending payload to ${url}: ${payload}"
+
         def connection = new URL(url).openConnection();
         connection.setRequestMethod("POST");
         connection.setRequestProperty("Content-Type", "application/json");
         connection.setDoOutput(true);
-        connection.getOutputStream().write(JsonOutput.toJson(body));
+        connection.getOutputStream().write(payload);
 
         def responseCode = connection.getResponseCode();
 
