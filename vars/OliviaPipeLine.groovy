@@ -1,7 +1,7 @@
-import test.utils.WebhookUtil
+import utils.WebhookUtil
 
 
-void call(Map params = [:], Closure buildScript){
+void call(){
     WebhookUtil webhookUtil = new WebhookUtil(this)
 
     pipeline {

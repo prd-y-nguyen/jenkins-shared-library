@@ -1,9 +1,0 @@
----
-default:
-  tenant: "test"
-  py3.10: false
-  hasworker: true
-  cmds:
-    deploy: "sourcecode.updatecode"
-    build: "sourcecode.prod-build"
-
