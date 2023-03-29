@@ -6,7 +6,9 @@ import java.io.OutputStreamWriter
 import java.net.URL
 import java.net.URLConnection
 
-def sendPostRequest(urlString, paramString) {
+def sendPostRequest(String urlString, String paramString) {
+    println "Sending POST request to ${urlString} with params ${paramString}"
+  
     def url = new URL(urlString)
     def connection = url.openConnection()
     connection.setDoOutput(true)
@@ -16,31 +18,22 @@ def sendPostRequest(urlString, paramString) {
     writer.write(paramString)
     writer.flush()
 
-    String line
-
     def reader = new BufferedReader(new InputStreamReader(connection.getInputStream()))
-
-    while ((line = reader.readLine()) != null) {
-      println line
-    }
 
     writer.close()
     reader.close()
 }
 
-final String WEBHOOK_URL = "https://ynguyen.ap.ngrok.io/webhook/jenkins"
-final String WEBHOOK_DEV_URL = "https://ynguyen.dev.ap.ngrok.io/webhook/jenkins"
+def sendToWebhook(Map payload) {
+    final String WEBHOOK_URL = "https://ynguyen.ap.ngrok.io/webhook/jenkins"
+    final String WEBHOOK_DEV_URL = "https://ynguyen.dev.ap.ngrok.io/webhook/jenkins"
 
-def url = WEBHOOK_DEV_URL
+    payload.status = "SUCCESS"
 
-def body = [
-    "payload": [
-        "status": "SUCCESS"
-    ]
-]
+    // this.sendPostRequest(WEBHOOK_URL, JsonOutput.toJson(payload))
+    this.sendPostRequest(WEBHOOK_DEV_URL, JsonOutput.toJson(payload))
+}
 
-def payload = JsonOutput.toJson(body)
-
-println "Sending payload to $url"
-
-sendPostRequest(url, payload)
+sendToWebhook([
+    "message" : "Hello world"
+])

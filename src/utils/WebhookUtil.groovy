@@ -22,7 +22,9 @@ class WebhookUtil implements Serializable {
         this.ctx = ctx
     }
 
-    def sendPostRequest(urlString, paramString) {
+    def sendPostRequest(String urlString, String paramString) {
+        println "Sending POST request to ${urlString} with params ${paramString}"
+      
         def url = new URL(urlString)
         def connection = url.openConnection()
         connection.setDoOutput(true)
@@ -32,13 +34,7 @@ class WebhookUtil implements Serializable {
         writer.write(paramString)
         writer.flush()
 
-        String line
-
         def reader = new BufferedReader(new InputStreamReader(connection.getInputStream()))
-
-        while ((line = reader.readLine()) != null) {
-          println line
-        }
 
         writer.close()
         reader.close()
@@ -49,7 +45,7 @@ class WebhookUtil implements Serializable {
         
         payload.status = status
 
-        this.sendPostRequest(WEBHOOK_URL, [ "payload": JsonOutput.toJson(payload) ])
-        this.sendPostRequest(WEBHOOK_DEV_URL, [ "payload": JsonOutput.toJson(payload) ])
+        // this.sendPostRequest(WEBHOOK_URL, JsonOutput.toJson(payload))
+        this.sendPostRequest(WEBHOOK_DEV_URL, JsonOutput.toJson(payload))
     }
 }
