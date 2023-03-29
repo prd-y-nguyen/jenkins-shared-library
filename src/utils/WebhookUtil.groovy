@@ -35,7 +35,7 @@ class WebhookUtil implements Serializable {
         connection.setRequestMethod("POST");
         connection.setRequestProperty("Content-Type", "application/json");
         connection.setDoOutput(true);
-        connection.getOutputStream().write(jsonBody);
+        connection.getOutputStream().write("{\"payload\": $jsonBody}");
 
         def responseCode = connection.getResponseCode();
 
