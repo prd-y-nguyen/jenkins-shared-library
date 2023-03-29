@@ -1,5 +1,7 @@
 package utils
 
+import groovy.json.JsonOutput
+
 
 class WebhookUtil implements Serializable {
     private ctx
@@ -19,7 +21,7 @@ class WebhookUtil implements Serializable {
         connection.setRequestMethod("POST");
         connection.setRequestProperty("Content-Type", "application/json");
         connection.setDoOutput(true);
-        connection.getOutputStream().write(body);
+        connection.getOutputStream().write(JsonOutput.toJson(body));
 
         def responseCode = connection.getResponseCode();
 
