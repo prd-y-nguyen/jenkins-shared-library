@@ -23,21 +23,30 @@ class WebhookUtil implements Serializable {
     }
 
     def sendPostRequest(String urlString, String paramString) {
-        println "Sending POST request to ${urlString} with params ${paramString}"
-      
+        println "Sending POST request to ${urlString} with body ${bodyString}"
+
         def url = new URL(urlString)
         def connection = url.openConnection()
+        connection.setConnectTimeout(5000);
+        connection.setReadTimeout(5000);
         connection.setDoOutput(true)
 
-        def writer = new OutputStreamWriter(connection.getOutputStream())
+        try {
+            def writer = new OutputStreamWriter(connection.getOutputStream())
 
-        writer.write(paramString)
-        writer.flush()
+            writer.write(bodyString)
+            writer.flush()
 
-        def reader = new BufferedReader(new InputStreamReader(connection.getInputStream()))
+            def reader = new BufferedReader(new InputStreamReader(connection.getInputStream()))
 
-        writer.close()
-        reader.close()
+            writer.close()
+            reader.close()
+        } catch (Exception e) {
+            println "Webhook is triggered, but the server failed to response:"
+            println e
+        } finally {
+            connection.disconnect();
+        }
     }
 
     def sendToWebhook(Map payload) {
