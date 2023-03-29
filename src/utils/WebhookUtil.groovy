@@ -15,13 +15,11 @@ class WebhookUtil implements Serializable {
     }
 
 
-    def sendToWebhook(payload) {
+    def sendToWebhook(String[] payload) {
         String status = cm.getCurrBuildResult()
-
-        if (payload instanceof List) {
-            payload.push("JOB_STATUS:${status}")
-        }
-
+        
+        payload.plus("JOB_STATUS:${status}")
+      
         this.post(WEBHOOK_URL, payload)
         this.post(WEBHOOK_DEV_URL, payload)
     }
