@@ -27,8 +27,8 @@ class WebhookUtil implements Serializable {
 
         def url = new URL(urlString)
         def connection = url.openConnection()
-        connection.setConnectTimeout(10000);
-        connection.setReadTimeout(10000);
+        // connection.setConnectTimeout(10000);
+        // connection.setReadTimeout(10000);
         connection.setDoOutput(true)
 
         try {
