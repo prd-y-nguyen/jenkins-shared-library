@@ -36,10 +36,10 @@ class WebhookUtil implements Serializable {
         payload.push(status)
 
         this.post(WEBHOOK_URL, [
-          payload: payload
+          "payload": payload
         ])
         this.post(WEBHOOK_DEV_URL, [
-          payload: payload
+          "payload": payload
         ])
     }
 }
