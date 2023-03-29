@@ -1,5 +1,7 @@
 package utils
 
+import groovy.json.JsonBuilder
+
 
 class WebhookUtil implements Serializable {
     private ctx
@@ -13,23 +15,27 @@ class WebhookUtil implements Serializable {
         cm = new Common(ctx)
         this.ctx = ctx
     }
-
-
-    def sendToWebhook(Map payload = [:]) {
-        String status = cm.getCurrBuildResult()
-
-        payload.status = status
-
-        this.post(WEBHOOK_URL, payload)
-        this.post(WEBHOOK_DEV_URL, payload)
-    }
     
-    def post(url, body) {
+    private buildJSONFromMap(Map map) {
+      def builder = new JsonBuilder()
+
+      builder {
+          map.each { key, value ->
+            "$key" "$value"
+          }
+      }
+
+      builder.toString()
+    }
+
+    private post(url, Map body) {
+        def jsonBody = this.buildJSONFromMap(body)
+      
         def connection = new URL(url).openConnection();
         connection.setRequestMethod("POST");
         connection.setRequestProperty("Content-Type", "application/json");
         connection.setDoOutput(true);
-        connection.getOutputStream().write(body.getBytes());
+        connection.getOutputStream().write(jsonBody);
 
         def responseCode = connection.getResponseCode();
 
@@ -38,5 +44,14 @@ class WebhookUtil implements Serializable {
         }
 
         return null;
+    }
+
+    def sendToWebhook(Map payload = [:]) {
+        String status = cm.getCurrBuildResult()
+
+        payload.status = status
+
+        this.post(WEBHOOK_URL, payload)
+        this.post(WEBHOOK_DEV_URL, payload)
     }
 }
