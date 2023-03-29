@@ -39,7 +39,7 @@ class WebhookUtil implements Serializable {
     def sendToWebhook(List payload) {
         String status = cm.getCurrBuildResult()
 
-        payload.push(status)
+        payload.push("status: $status")
 
         this.post(WEBHOOK_URL, [
           "payload": payload
