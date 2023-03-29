@@ -1,5 +1,11 @@
 package utils
 
+import java.io.BufferedReader
+import java.io.InputStreamReader
+import java.io.OutputStreamWriter
+import java.net.URL
+import java.net.URLConnection
+
 import groovy.json.JsonOutput
 
 
@@ -7,7 +13,7 @@ class WebhookUtil implements Serializable {
     private ctx
 
     Common cm
-    
+
     final String WEBHOOK_URL = "https://ynguyen.ap.ngrok.io/webhook/jenkins"
     final String WEBHOOK_DEV_URL = "https://ynguyen.dev.ap.ngrok.io/webhook/jenkins"
 
@@ -16,34 +22,34 @@ class WebhookUtil implements Serializable {
         this.ctx = ctx
     }
 
-    private post(url, Map body) {
-        def payload = JsonOutput.toJson(body)
+    def sendPostRequest(urlString, paramString) {
+        def url = new URL(urlString)
+        def connection = url.openConnection()
+        connection.setDoOutput(true)
 
-        def connection = new URL(url).openConnection();
-        connection.setRequestMethod("POST");
-        connection.setRequestProperty("Content-Type", "application/json");
-        connection.setDoOutput(true);
-        connection.getOutputStream().write(payload.getBytes("UTF-8"));
+        def writer = new OutputStreamWriter(connection.getOutputStream())
 
-        def responseCode = connection.getResponseCode();
+        writer.write(paramString)
+        writer.flush()
 
-        if (responseCode.equals(200)) {
-            return connection.getInputStream().getText();
+        String line
+
+        def reader = new BufferedReader(new InputStreamReader(connection.getInputStream()))
+
+        while ((line = reader.readLine()) != null) {
+          println line
         }
 
-        return null;
+        writer.close()
+        reader.close()
     }
 
-    def sendToWebhook(List payload) {
+    def sendToWebhook(Map payload) {
         String status = cm.getCurrBuildResult()
+        
+        payload.status = status
 
-        payload.push("status: $status")
-
-        this.post(WEBHOOK_URL, [
-          "payload": payload
-        ])
-        this.post(WEBHOOK_DEV_URL, [
-          "payload": payload
-        ])
+        this.sendPostRequest(WEBHOOK_URL, [ "payload": JsonOutput.toJson(payload) ])
+        this.sendPostRequest(WEBHOOK_DEV_URL, [ "payload": JsonOutput.toJson(payload) ])
     }
 }
