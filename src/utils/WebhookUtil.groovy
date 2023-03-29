@@ -17,9 +17,7 @@ class WebhookUtil implements Serializable {
     }
 
     private post(url, Map body) {
-        String payload = JsonOutput.toJson(body)
-
-        println "Sending payload to ${url}: ${payload}"
+        def payload = JsonOutput.toJson(body)
 
         def connection = new URL(url).openConnection();
         connection.setRequestMethod("POST");
