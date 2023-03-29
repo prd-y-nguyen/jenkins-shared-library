@@ -6,7 +6,7 @@ void call(){
 
     pipeline {
         webhookUtil.sendToWebhook([
-            "Hello world",
+            message: "Hello world"
         ])
     }
 }
