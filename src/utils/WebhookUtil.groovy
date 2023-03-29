@@ -22,7 +22,7 @@ class WebhookUtil implements Serializable {
         this.ctx = ctx
     }
 
-    def sendPostRequest(String urlString, String paramString) {
+    def sendPostRequest(String urlString, String bodyString) {
         println "Sending POST request to ${urlString} with body ${bodyString}"
 
         def url = new URL(urlString)
